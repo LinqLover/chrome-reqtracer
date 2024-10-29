@@ -1,0 +1,17 @@
+{
+  "name": "chrome-reqtracer",
+  "version": "1.0.0",
+  "description": "Tracks all network requests of the current tab",
+  "scripts": {
+    "build": "parcel build src/* --dist-dir dist --public-url ./",
+    "watch": "parcel watch src/* --dist-dir dist --public-url ./"
+  },
+  "author": "Christoph Thiede",
+  "license": "ISC",
+  "dependencies": {
+    "preact": "^10.24.3"
+  },
+  "devDependencies": {
+    "parcel": "^2.12.0"
+  }
+}
