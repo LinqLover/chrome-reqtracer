@@ -1,3 +1,5 @@
+'use strict'
+
 let requests = {}
 let navigationStartTimes = {}
 let settings = {
@@ -12,13 +14,13 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
 })
 
 
-updateBadge = () => {
+const updateBadge = () => {
   chrome.action.setBadgeText({
     text: requests[currentTabId]?.length.toString() ?? ""
   })
 }
 
-requestsChanged = () => {
+const requestsChanged = () => {
   updateBadge()
   chrome.runtime.sendMessage({ type: 'updateRequests', requests: requests[currentTabId] ?? [] })
 }

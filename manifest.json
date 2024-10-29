@@ -8,11 +8,11 @@
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
-            "js": ["dist/content.js"]
+            "js": ["src/content.js"]
         }
     ],
     "background": {
-        "service_worker": "dist/background.js"
+        "service_worker": "src/background.js"
     },
     "action": {
         "default_title": "Chrome ReqTracer",
@@ -21,7 +21,7 @@
             "48": "assets/icon48.png",
             "128": "assets/icon128.png"
         },
-        "default_popup": "dist/popup.html"
+        "default_popup": "src/popup.html"
     },
     "icons": {
         "16": "assets/icon16.png",

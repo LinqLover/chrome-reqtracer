@@ -3,15 +3,32 @@
   "version": "1.0.0",
   "description": "Tracks all network requests of the current tab",
   "scripts": {
-    "build": "parcel build src/* --dist-dir dist --public-url ./",
-    "watch": "parcel watch src/* --dist-dir dist --public-url ./"
+    "dev": "vite build --mode development",
+    "build": "vite build --mode production",
+    "watch": "npm-watch",
+    "clean": "rm -rf dist"
+  },
+  "scriptsComments": {
+    "watch": "WORKAROUND: vite-plugin-chrome-extension does not support vite's watch mode, see https://github.com/StarkShang/vite-plugin-chrome-extension/issues/6#issuecomment-945273488"
+  },
+  "watch": {
+    "dev": {
+      "patterns": [
+        "src"
+      ],
+      "extensions": "html,js,json,jsx",
+      "runOnChangeOnly": false
+    }
   },
   "author": "Christoph Thiede",
   "license": "ISC",
   "dependencies": {
-    "preact": "^10.24.3"
+    "@preact/preset-vite": "^2.9.1",
+    "preact": "^10.24.3",
+    "vite": "^5.4.10"
   },
   "devDependencies": {
-    "parcel": "^2.12.0"
+    "npm-watch": "^0.13.0",
+    "vite-plugin-chrome-extension": "^0.0.7"
   }
 }
