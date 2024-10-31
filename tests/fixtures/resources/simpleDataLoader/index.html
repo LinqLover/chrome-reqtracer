@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loader Page</title>
+  <link rel="icon" href="data:,">
+  <script>
+    let fileIndex = 0
+
+    function loadNextData() {
+      const xhr = new XMLHttpRequest()
+      xhr.open('GET', `data/${++fileIndex}.txt`, true)
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          const content = document.createElement('p')
+          content.textContent = xhr.responseText
+          document.body.appendChild(content)
+        } else {
+          alert('No more data to load.')
+        }
+      }
+      xhr.send()
+    }
+  </script>
+</head>
+<body>
+  <h1>Simple Data Loader</h1>
+  <button onclick="loadNextData()">Load Next Data</button>
+</body>
+</html>

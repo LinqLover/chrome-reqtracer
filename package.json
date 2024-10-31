@@ -6,6 +6,7 @@
     "dev": "vite build --mode development",
     "build": "vite build --mode production",
     "watch": "npm-watch",
+    "test": "playwright test",
     "clean": "rm -rf dist"
   },
   "scriptsComments": {
@@ -33,7 +34,10 @@
     "vite": "^5.4.10"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.2",
+    "http-server": "^14.1.1",
     "npm-watch": "^0.13.0",
-    "vite-plugin-chrome-extension": "^0.0.7"
+    "vite-plugin-chrome-extension": "^0.0.7",
+    "vite-plugin-css-injected-by-js": "^3.5.2"
   }
 }
