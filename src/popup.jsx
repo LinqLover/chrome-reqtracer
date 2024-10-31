@@ -1,55 +1,112 @@
+import { AgGridReact } from 'ag-grid-react'
 import { render } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
+import { Button } from 'react-bootstrap'
+import { FaBroom } from 'react-icons/fa'
+import "ag-grid-community/styles/ag-grid.css"
+import "ag-grid-community/styles/ag-theme-quartz.css"
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
-  return (
-    <div>
-      <h1>Chrome ReqTracer!</h1>
-      <RequestList />
-    </div>
-  )
-}
-
-function RequestList() { 
-  const [requests, setRequests] = useState([])
+  const [tabId, setTabId] = useState(null)
+  // debug support
+  ;(window.extension ??= { }).tabId = tabId
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === 'updateRequests') {
-        setRequests(message.requests)
-      }
-    })
-    chrome.runtime.sendMessage({ type: 'getRequests' }, (response) => {
-      setRequests(response.requests)
+    const url = new URL(window.location.href)
+
+    // for testing (see ExtensionIcon.popUp())
+    const tabId = url.searchParams.get('tabId')
+    if (tabId) {
+      setTabId(parseInt(tabId))
+      return
+    }
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      setTabId(tabs[0].id)
     })
   }, [])
 
-  return (
-    <table>
-      <thead>
-        <tr>
-          <th>Time</th>
-          <th>Method</th>
-          <th>URL</th>
-        </tr>
-      </thead>
-      <tbody>
-        {requests.map(request => <RequestRow key={request.requestId} request={request} />)}
-      </tbody>
-    </table>
-  )
+  const clearRequests = () => {
+    chrome.runtime.sendMessage({
+      type: 'clearRequests',
+      tabId: tabId
+    })
+  }
+
+  return <div>
+    <div className="p-3">
+      <h1 className="h4">Chrome ReqTracer</h1>
+      <Button
+        id="clear-requests-button"
+        onClick={clearRequests} 
+        style={{ position: 'absolute', right: '10px', top: '10px', padding: '0.25rem 0.5rem' }}
+        title="Clear all requests"
+      >
+        <FaBroom />
+      </Button>
+    </div>
+    <RequestList tabId={tabId} />
+  </div>
 }
 
-function RequestRow({ request }) {
-  const timeStamp = new Date(request.timeStamp).toLocaleTimeString()
+function RequestList({ tabId }) { 
+  const [requests, setRequests] = useState([])
+  // for debugging support
+  ;(window.extension ??= { }).requests = requests
 
-  return (
-    <tr key={request.requestId}>
-      <td>{timeStamp}</td>
-      <td>{request.method}</td>
-      <td>{request.url}</td>
-    </tr>
-  )
+  useEffect(() => {
+    chrome.runtime.onMessage.addListener((message) => {
+      console.log("New message: ", message)
+      if (message.type === 'updateRequests' && message.tabId == tabId) {
+        console.log("Setting requests: ", message.requests)
+        setRequests(message.requests)
+      }
+    })
+    chrome.runtime.sendMessage({ type: 'getRequests', tabId }, (response) => {
+      setRequests(response.requests)
+    })
+  }, [tabId])
+
+  const getRowId = (data) => data.data.uniqueId
+
+  return <div className='p-3'>
+    <div className="ag-theme-quartz" style={{ width: '700px', height: '500px' }} >
+      <AgGridReact
+        columnDefs={[
+          {
+            headerName: 'Time',
+            field: 'relativeTime',
+            valueFormatter: (params) => (params.value / 1000).toFixed(3) + 's',
+            filter: 'agNumberColumnFilter',
+          },
+          {
+            headerName: 'Method',
+            field: 'method',
+            /*filter: 'agSetColumnFilter',
+            filterParams: { values: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] },*/
+            // not available in free version
+            filter: 'agTextColumnFilter',
+            floatingFilter: true,
+          },
+          {
+            headerName: 'URL',
+            field: 'url',
+            filter: 'agTextColumnFilter',
+            floatingFilter: true,
+            flex: 1,
+          },
+        ]}
+        rowData={requests}
+        getRowId={getRowId}
+        animateRows={false}
+        domLayout='normal'
+        autoSizeStrategy={{
+          type: 'fitCellContents',
+        }}
+        style={{ height: '100%' }}
+      />
+    </div>
+  </div>
 }
 
 render(<App />, document.getElementById('app'))
