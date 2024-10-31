@@ -55,14 +55,16 @@ function RequestList({ tabId }) {
   ;(window.extension ??= { }).requests = requests
 
   useEffect(() => {
-    chrome.runtime.onMessage.addListener((message) => {
-      if (message.type === 'updateRequests' && message.tabId == tabId) {
-        setRequests(message.requests)
+    const messageListener = (message) => {
+      if (message.type === 'updateRequests' && message.tabId === tabId) {
+        setRequests(message.requests);
       }
-    })
+    }
+    chrome.runtime.onMessage.addListener(messageListener);
     chrome.runtime.sendMessage({ type: 'getRequests', tabId }, (response) => {
       setRequests(response.requests)
     })
+    return () => chrome.runtime.onMessage.removeListener(messageListener)
   }, [tabId])
 
   const getRowId = (data) => data.data.uniqueId
