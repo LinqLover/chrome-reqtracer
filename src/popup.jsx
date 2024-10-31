@@ -56,9 +56,7 @@ function RequestList({ tabId }) {
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((message) => {
-      console.log("New message: ", message)
       if (message.type === 'updateRequests' && message.tabId == tabId) {
-        console.log("Setting requests: ", message.requests)
         setRequests(message.requests)
       }
     })
