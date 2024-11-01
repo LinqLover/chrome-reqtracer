@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "lib": ["ESNext"],
+    "lib": ["ESNext", "ES2015"],
     "strict": true,
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
