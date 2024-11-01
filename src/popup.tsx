@@ -1,11 +1,10 @@
 import { GetRowIdParams } from 'ag-grid-community'
 import { AgGridReact } from 'ag-grid-react'
-import { render } from 'preact'
-import { FC } from 'preact/compat'
-import { useState, useEffect } from 'preact/hooks'
+import { FC, useEffect, useState } from 'react'
 import { Button } from 'react-bootstrap'
+import { createRoot } from 'react-dom/client'
 import { FaBroom } from 'react-icons/fa'
-import { BroadcastServices, Request, sendMessageToBackground, startMessageServer, TabId } from './support.ts'
+import { BroadcastServices, GetRequestsResponse, Request, sendMessageToBackground, startMessageServer, TabId } from './support.ts'
 import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-quartz.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -54,24 +53,24 @@ type RequestListProps = {
   tabId: TabId | undefined
 }
 
-const RequestList: FC<RequestListProps> = ({ tabId }) => {
+const RequestList: FC<RequestListProps> = ({ tabId }): JSX.Element => {
   const [requests, setRequests] = useState<Request[]>([])
   // for debugging support
   ;(globalThis.extension ??= { }).requests = requests
 
   useEffect(() => {
     if (tabId === undefined) return
-    const cleanUpSessageServer = startMessageServer({
+    const cleanUpMessageServer = startMessageServer({
       updateRequests: (message) => {
         if (message.tabId === tabId) {
           setRequests(message.requests)
         }
       },
     } as BroadcastServices)
-    sendMessageToBackground<'getRequests'>({ type: 'getRequests', tabId }, (response) => {
+    sendMessageToBackground<'getRequests', GetRequestsResponse>({ type: 'getRequests', tabId }, (response) => {
       setRequests(response.requests)
     })
-    return cleanUpSessageServer
+    return cleanUpMessageServer
   }, [tabId])
 
   const getRowId = (data: GetRowIdParams<Request>) => data.data.uniqueId
@@ -110,10 +109,10 @@ const RequestList: FC<RequestListProps> = ({ tabId }) => {
         autoSizeStrategy={{
           type: 'fitCellContents',
         }}
-        style={{ height: '100%' }}
       />
     </div>
   </div>
 }
 
-render(<App />, document.getElementById('app')!)
+const root = createRoot(document.getElementById('app')!)
+root.render(<App />)
