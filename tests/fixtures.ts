@@ -1,6 +1,6 @@
 import * as httpServer from 'http-server'
 import { test as base, chromium } from '@playwright/test'
-import path from 'path'
+import * as path from 'path'
 
 export const test = base.extend({
   context: async ({ }, use) => {
@@ -15,6 +15,7 @@ export const test = base.extend({
     await use(context)
     await context.close()
   },
+
   extension: async ({ context }, use) => {
     let [backgroundWorker] = context.serviceWorkers()
     if (!backgroundWorker)
@@ -25,6 +26,7 @@ export const test = base.extend({
     await new Promise((resolve) => setTimeout(resolve, 1000))
     await use({ extensionId, backgroundWorker })
   },
+
   resourcesServer: async ({}, use) => {
     const serverPath = path.join(__dirname, 'fixtures/resources')
 

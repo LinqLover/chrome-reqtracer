@@ -1,3 +1,4 @@
+// @ts-ignore crypto.randomUUID is supported in modrn Chrome versions
 import { UUID } from 'crypto'
 
 export type Request = chrome.webRequest.WebRequestDetails & {

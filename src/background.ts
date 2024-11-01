@@ -11,14 +11,14 @@ class Extension {
 
   private _currentTabId: TabId | undefined
 
-  updateBadge() {
-    chrome.action.setBadgeText({
+  async updateBadge() {
+    await chrome.action.setBadgeText({
       text: this.requests[this._currentTabId!]?.length.toString() ?? ""
     })
   }
 
   requestsChanged(tabId: number) {
-    this.updateBadge()
+    this.updateBadge().catch(err => console.error(err))
     broadcastMessageToPopups({
       type: 'updateRequests',
       tabId: tabId,
@@ -27,10 +27,10 @@ class Extension {
   }
 
   tabChanged() {
-    this.updateBadge()
+    this.updateBadge().catch(err => console.error(err))
   }
 
-  shouldHideRequest(request: Request) {
+  shouldHideRequest(request: chrome.webRequest.WebRequestDetails) {
     // Stub for future filtering of requests
     return false
   }
