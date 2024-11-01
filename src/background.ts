@@ -43,7 +43,7 @@ class Extension {
   }
 
   startWebRequestsListener() {
-    chrome.webRequest.onBeforeRequest.addListener(
+    chrome.webRequest.onCompleted.addListener(
       (details) => {
         if (this.shouldHideRequest(details)) return
 

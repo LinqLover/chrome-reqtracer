@@ -21,6 +21,15 @@ test("should trace initial request", async ({ page }) => {
   ]))
 })
 
+test("should not trace unsuccessful request", async ({ page }) => {
+  const popup = await icon.openPopup(page)
+  await loader.loadUnavailableData()
+  expect(await icon.getBadgeText()).toBe("1")
+  expect(await popup.waitForRows([
+    [/^0\.\d{3}s$/, 'GET', loader.pageUrl],
+  ]))
+})
+
 test("should trace dynamic requests", async ({ page }) => {
   const popup = await icon.openPopup(page)
 
