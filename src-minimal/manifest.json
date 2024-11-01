@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Chrome ReqTracer (minimal version)",
+  "version": "1.0",
+  "description": "Tracks all network requests of the current tab",
+  "permissions": ["webRequest"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Chrome ReqTracer (minimal version)"
+  }
+}
