@@ -1,7 +1,7 @@
-import { expect } from '@playwright/test'
+import { expect, Page } from '@playwright/test'
 
 export default class SimpleDataLoader {
-  static async open(page, url) {
+  static async open(page: Page, url: string) {
     const loader = new SimpleDataLoader(page, url)
     await loader.openPage()
     return loader
@@ -9,7 +9,8 @@ export default class SimpleDataLoader {
 
   static DATA = [, 'one', 'two', 'three', 'four', 'five']
 
-  constructor(page, url) {
+  pageUrl: string
+  constructor(public page: Page, public url: string) {
     this.page = page
     this.url = url
     this.pageUrl = `${this.url}/`
@@ -29,7 +30,7 @@ export default class SimpleDataLoader {
 
   async loadNextData() {
     await this.page.click('button')
-    await expect(this.page.locator('body')).toContainText(SimpleDataLoader.DATA[++this.index])
+    await expect(this.page.locator('body')).toContainText(SimpleDataLoader.DATA[++this.index]!)
 
     return {
       expectedUrl: `${this.url}/data/${this.index}.txt`,

@@ -1,13 +1,15 @@
-import { expect } from '@playwright/test'
-import ExtensionPopup from './ExtensionPopup.js'
+import { expect, Page } from '@playwright/test'
+import ExtensionPopup from './ExtensionPopup.ts'
 
 export default class ExtensionIcon {
-  constructor(extensionInfo) {
-    this.background = extensionInfo.background
+  public backgroundWorker: Worker & { evaluate: Page['evaluate'] }
+  public extensionId: string
+  constructor(extensionInfo: { backgroundWorker: Worker; extensionId: string }) {
+    this.backgroundWorker = extensionInfo.backgroundWorker as Worker & { evaluate: Page['evaluate'] }
     this.extensionId = extensionInfo.extensionId
   }
 
-  async storeCurrentTabId(page) {
+  async storeCurrentTabId(page: Page) {
     // shortly switch tab forth and back because current tab detection is unreliable before
     const tempPage = await page.context().newPage()
     await tempPage.bringToFront()
@@ -15,13 +17,13 @@ export default class ExtensionIcon {
   }
 
   async getBadgeText() {
-    return await this.background.evaluate(
+    return await this.backgroundWorker.evaluate(
       (tabId) => chrome.action.getBadgeText({ tabId }),
-      await this._getCurrentTabId()
+      await this._getCurrentTabId()!
     )
   }
 
-  async openPopup(page) {
+  async openPopup(page: Page) {
     //await this.background.evaluate(() => chrome.action.openPopup())
     // WORKAROUND: cannot control the popup
 
@@ -36,7 +38,7 @@ export default class ExtensionIcon {
   }
 
   async _getCurrentTabId() {
-    const tabs = await this.background.evaluate(() =>
+    const tabs = await this.backgroundWorker.evaluate(() =>
       chrome.tabs.query({ active: true, currentWindow: true }))
     return tabs[0].id
   }

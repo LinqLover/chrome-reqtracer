@@ -1,16 +1,19 @@
+import { GetRowIdParams } from 'ag-grid-community'
 import { AgGridReact } from 'ag-grid-react'
 import { render } from 'preact'
+import { FC } from 'preact/compat'
 import { useState, useEffect } from 'preact/hooks'
 import { Button } from 'react-bootstrap'
 import { FaBroom } from 'react-icons/fa'
+import { BroadcastServices, Request, sendMessageToBackground, startMessageServer, TabId } from './support.ts'
 import "ag-grid-community/styles/ag-grid.css"
 import "ag-grid-community/styles/ag-theme-quartz.css"
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 function App() {
-  const [tabId, setTabId] = useState(null)
+  const [tabId, setTabId] = useState<TabId>()
   // debug support
-  ;(window.extension ??= { }).tabId = tabId
+  ;(globalThis.extension ??= { }).tabId = tabId
 
   useEffect(() => {
     const url = new URL(window.location.href)
@@ -27,10 +30,8 @@ function App() {
   }, [])
 
   const clearRequests = () => {
-    chrome.runtime.sendMessage({
-      type: 'clearRequests',
-      tabId: tabId
-    })
+    if (tabId === undefined) return
+    sendMessageToBackground({ type: 'clearRequests', tabId })
   }
 
   return <div>
@@ -38,7 +39,7 @@ function App() {
       <h1 className="h4">Chrome ReqTracer</h1>
       <Button
         id="clear-requests-button"
-        onClick={clearRequests} 
+        onClick={clearRequests}
         style={{ position: 'absolute', right: '10px', top: '10px', padding: '0.25rem 0.5rem' }}
         title="Clear all requests"
       >
@@ -49,25 +50,31 @@ function App() {
   </div>
 }
 
-function RequestList({ tabId }) { 
-  const [requests, setRequests] = useState([])
+type RequestListProps = {
+  tabId: TabId | undefined
+}
+
+const RequestList: FC<RequestListProps> = ({ tabId }) => {
+  const [requests, setRequests] = useState<Request[]>([])
   // for debugging support
-  ;(window.extension ??= { }).requests = requests
+  ;(globalThis.extension ??= { }).requests = requests
 
   useEffect(() => {
-    const messageListener = (message) => {
-      if (message.type === 'updateRequests' && message.tabId === tabId) {
-        setRequests(message.requests);
-      }
-    }
-    chrome.runtime.onMessage.addListener(messageListener);
-    chrome.runtime.sendMessage({ type: 'getRequests', tabId }, (response) => {
+    if (tabId === undefined) return
+    const cleanUpSessageServer = startMessageServer({
+      updateRequests: (message) => {
+        if (message.tabId === tabId) {
+          setRequests(message.requests)
+        }
+      },
+    } as BroadcastServices)
+    sendMessageToBackground<'getRequests'>({ type: 'getRequests', tabId }, (response) => {
       setRequests(response.requests)
     })
-    return () => chrome.runtime.onMessage.removeListener(messageListener)
+    return cleanUpSessageServer
   }, [tabId])
 
-  const getRowId = (data) => data.data.uniqueId
+  const getRowId = (data: GetRowIdParams<Request>) => data.data.uniqueId
 
   return <div className='p-3'>
     <div className="ag-theme-quartz" style={{ width: '700px', height: '500px' }} >
@@ -109,4 +116,4 @@ function RequestList({ tabId }) {
   </div>
 }
 
-render(<App />, document.getElementById('app'))
+render(<App />, document.getElementById('app')!)

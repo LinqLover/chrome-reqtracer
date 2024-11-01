@@ -1,9 +1,11 @@
-import { expect } from '@playwright/test'
-import { agGridTest } from '../vendor/agGridUtils'
+import { expect, Page } from '@playwright/test'
+import { agGridTest } from '../vendor/agGridUtils.ts'
+
+export type RowSpec = [RegExp, string, string]
 
 export default class ExtensionPopup {
-  constructor(page) {
-    this.page = page
+  gridTest: ReturnType<typeof agGridTest>
+  constructor(public page: Page) {
     this.gridTest = agGridTest(this.page)
   }
 
@@ -11,7 +13,7 @@ export default class ExtensionPopup {
     await this.page.click('#clear-requests-button')
   }
 
-  async waitForRows(rowSpecs = undefined) {
+  async waitForRows(rowSpecs: RowSpec[] | undefined = undefined) {
     if (!(rowSpecs !== undefined && rowSpecs.length === 0)) {
       await this.gridTest.waitForCells()
     }
@@ -21,7 +23,7 @@ export default class ExtensionPopup {
     }
   }
 
-  async hasRows(rowSpecs)
+  async hasRows(rowSpecs: RowSpec[])
   {
     const rowCount = await this.gridTest.getRowCount()
     expect(rowCount).toBe(rowSpecs.length)
@@ -30,12 +32,12 @@ export default class ExtensionPopup {
     }
   }
 
-  async hasRow(i, rowSpec) {
-    const rowContents = await this.gridTest.getRowContents(i)
+  async hasRow(index: number, rowSpec: RowSpec) {
+    const rowContents = await this.gridTest.getRowContents(index)
     expect(rowContents.length).toBe(rowSpec.length)
     expect(rowContents[0]).toMatch(rowSpec[0])
-    for (let j = 1; j < rowContents.length; j++) {
-      expect(rowContents[j]).toBe(rowSpec[j])
+    for (let colIndex = 1; colIndex < rowContents.length; colIndex++) {
+      expect(rowContents[colIndex]).toBe(rowSpec[colIndex])
     }
   }
 }
