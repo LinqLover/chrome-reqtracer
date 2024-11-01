@@ -1,5 +1,3 @@
-'use strict'
-
 import { BackgroundServices, broadcastMessageToPopups, ClearRequestsMessage, GetRequestsMessage, Request, startMessageServer, TabId } from './support'
 
 class Extension {
@@ -13,7 +11,7 @@ class Extension {
 
   async updateBadge() {
     await chrome.action.setBadgeText({
-      text: this.requests[this._currentTabId!]?.length.toString() ?? ""
+      text: (this.requests[this._currentTabId!]?.length ?? 0).toString()
     })
   }
 
@@ -69,7 +67,7 @@ class Extension {
     chrome.webNavigation.onCommitted.addListener((details) => {
       if (!this.settings.resetOnReload) return
 
-      if (details.frameId === 0 && details.transitionType === "reload") {
+      if (details.frameId === 0 && details.transitionType === 'reload') {
         if (this.requests[details.tabId]) {
           this.requests[details.tabId] = this.requests[details.tabId].filter((request) =>
             request.timeStamp > this.navigationStartTimes[details.tabId])
