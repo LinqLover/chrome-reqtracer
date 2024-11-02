@@ -7,6 +7,7 @@ import { BackgroundServices, broadcastMessageToPopups, ClearRequestsMessage, Get
 class Extension {
   requests: { [key: TabId]: Request[] } = {}
   tabCreationTimes: { [key: TabId]: number } = {}
+  navigationStartTimes: { [key: TabId]: number } = {}
   // To be later exposed in the popup or an options page
   settings = {
     /** If enabled, reloading a page will reset the requests for the current tab. */
@@ -41,7 +42,7 @@ class Extension {
 
   startListeners() {
     this.startWebRequestsListener()
-    this.startWebNavigationListener()
+    this.startWebNavigationListeners()
     this.startTabListeners()
     this.startMessageListener()
   }
@@ -63,14 +64,20 @@ class Extension {
     )
   }
 
-  startWebNavigationListener() {
+  startWebNavigationListeners() {
+    chrome.webNavigation.onBeforeNavigate.addListener((details) => {
+      if (details.frameId === 0) {
+        this.navigationStartTimes[details.tabId] = details.timeStamp
+      }
+    })
+
     chrome.webNavigation.onCommitted.addListener((details) => {
       if (!this.settings.resetOnReload) return
 
       if (details.frameId === 0 && details.transitionType === 'reload') {
         if (this.requests[details.tabId]) {
           this.requests[details.tabId] = this.requests[details.tabId].filter((request) =>
-            request.timeStamp > this.tabCreationTimes[details.tabId])
+            request.timeStamp > this.navigationStartTimes[details.tabId])
         }
         this.requestsChanged(details.tabId)
       }
@@ -91,6 +98,7 @@ class Extension {
     chrome.tabs.onRemoved.addListener((tabId) => {
       delete this.requests[tabId]
       delete this.tabCreationTimes[tabId]
+      delete this.navigationStartTimes[tabId]
       this.requestsChanged(tabId)
     })
   }
