@@ -3,7 +3,7 @@ name: Build
 on:
   push:
     branches:
-      - main
+      - '*'
 
 jobs:
   build:
@@ -29,3 +29,35 @@ jobs:
         with:
           name: chrome-reqtracer
           path: dist/
+
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: chrome-reqtracer
+          path: .
+
+      - name: Zip dist folder
+        run: zip -r chrome-reqtracer.zip dist
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: 'untagged'
+          release_name: 'Untagged Release'
+          draft: false
+          prerelease: true
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: chrome-reqtracer.zip
+          asset_name: chrome-reqtracer.zip
+          asset_content_type: application/zip
