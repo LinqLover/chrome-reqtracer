@@ -42,15 +42,20 @@ jobs:
           name: chrome-reqtracer
           path: .
 
-      - name: Zip dist folder
-        run: zip -r chrome-reqtracer.zip dist
+      - name: Zip extension
+        run: zip -r chrome-reqtracer.zip chrome-reqtracer
+
+      - name: Get Date
+        id: date
+        run: echo "date=$(date +'%Y%m%d-%H%M%S')" >> "$GITHUB_OUTPUT"
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: 'untagged'
-          release_name: 'Untagged Release'
+          tag_name: untagged-${{ steps.date.outputs.date }}
+          body: ${{ github.event.head_commit.message }}
+          release_name: untagged-${{ steps.date.outputs.date }}
           draft: false
           prerelease: true
 
