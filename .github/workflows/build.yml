@@ -40,7 +40,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: chrome-reqtracer
-          path: .
+          path: chrome-reqtracer
 
       - name: Zip extension
         run: zip -r chrome-reqtracer.zip chrome-reqtracer
