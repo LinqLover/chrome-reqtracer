@@ -58,6 +58,8 @@ jobs:
           release_name: untagged-${{ steps.date.outputs.date }}
           draft: false
           prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -66,3 +68,5 @@ jobs:
           asset_path: chrome-reqtracer.zip
           asset_name: chrome-reqtracer.zip
           asset_content_type: application/zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
