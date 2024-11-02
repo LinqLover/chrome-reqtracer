@@ -2,6 +2,7 @@
  * Background worker of the extension. Traces web requests, updates the extension badge, and communicates with popups.
  */
 
+import { defaultSettings } from './settings'
 import { BackgroundServices, broadcastMessageToPopups, ClearRequestsMessage, GetRequestsMessage, Request, startMessageServer, TabId } from './support'
 
 class Extension {
@@ -9,10 +10,7 @@ class Extension {
   tabCreationTimes: { [key: TabId]: number } = {}
   navigationStartTimes: { [key: TabId]: number } = {}
   // To be later exposed in the popup or an options page
-  settings = {
-    /** If enabled, reloading a page will reset the requests for the current tab. */
-    resetOnReload: false
-  }
+  settings = {...defaultSettings}
 
   private _currentTabId: TabId | undefined
 
@@ -87,6 +85,12 @@ class Extension {
   startTabListeners() {
     chrome.tabs.onActivated.addListener((activeInfo) => {
       this._currentTabId = activeInfo.tabId
+      if (!this.settings.traceBackgroundTabs) {
+        // Clear requests for inactive tabs
+        this.requests = {
+          [activeInfo.tabId]: this.requests[activeInfo.tabId]
+        }
+      }
       this.tabChanged()
     })
 

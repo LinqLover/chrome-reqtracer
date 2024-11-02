@@ -17,13 +17,17 @@ Uses TypeScript, vite, Chrome Extension API, React, Bootstrap, Font Awesome, AG-
 
 ## Usage
 
-Browse any website you like and watch how the counter of traced requests increases. Requests are always traced for all tabs and displayed for the active tab.
+Browse and interact with any website you like and watch how the counter of traced requests increases. Requests are always traced for all tabs and displayed lively for the active tab.
 
 You can click on the extension icon to view a list of all sucessful requests.
 
 - Use the broom icon (🧹) to clear the list and reset the counter.
 - You click on table headers to change the sorting of requests, resize table columns, or filter the requests through the available options.
 - As the current tab performs further web requests (e.g., when hovering the "I'm feeeling lucky" button of Google at the time of writing), the list will automatically update.
+
+## Settings (experimental)
+
+Some settings for the extension can be configured in `src/settings.ts`. Please refer to the comments in the file for more information. In the future, these settings might be exposed to the user through the popup or an options page.
 
 ## Development
 
