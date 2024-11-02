@@ -3,6 +3,7 @@ import { agGridTest } from '../vendor/agGridUtils.ts'
 
 export type RowSpec = [RegExp, string, string]
 
+/** POM for the extension popup. */
 export default class ExtensionPopup {
   gridTest: ReturnType<typeof agGridTest>
   constructor(public page: Page) {
@@ -13,6 +14,7 @@ export default class ExtensionPopup {
     await this.page.click('#clear-requests-button')
   }
 
+  /** Waits until the expected row specs have appeared in the popup. */
   async waitForRows(rowSpecs: RowSpec[] | undefined = undefined) {
     if (!(rowSpecs !== undefined && rowSpecs.length === 0)) {
       await this.gridTest.waitForCells()

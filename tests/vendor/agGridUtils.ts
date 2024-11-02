@@ -82,7 +82,7 @@ export async function getCellLocatorBy(page: Page, options: CellLocatorOptions) 
     let colId = options.colId;
     if (!colId && options.colHeaderName) {
         const headerCell = page.getByRole('columnheader', { name: options.colHeaderName });
-        colId = await headerCell.getAttribute('col-id')!;
+        colId = await headerCell.getAttribute('col-id') || undefined;
     }
     return getCellLocator(page, colId!, options.rowIndex);
 }

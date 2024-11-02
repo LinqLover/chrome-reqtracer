@@ -1,11 +1,14 @@
 import { expect, Page } from '@playwright/test'
+import { Worker } from 'playwright-core'
 import ExtensionPopup from './ExtensionPopup.ts'
+import { ExtensionInfo } from '../fixtures.ts'
 
+/** Test object model for the extension icon. */
 export default class ExtensionIcon {
-  public backgroundWorker: Worker & { evaluate: Page['evaluate'] }
+  public backgroundWorker: Worker
   public extensionId: string
-  constructor(extensionInfo: { backgroundWorker: Worker; extensionId: string }) {
-    this.backgroundWorker = extensionInfo.backgroundWorker as Worker & { evaluate: Page['evaluate'] }
+  constructor(extensionInfo: ExtensionInfo) {
+    this.backgroundWorker = extensionInfo.backgroundWorker
     this.extensionId = extensionInfo.extensionId
   }
 
@@ -25,7 +28,7 @@ export default class ExtensionIcon {
 
   async openPopup(page: Page) {
     //await this.background.evaluate(() => chrome.action.openPopup())
-    // WORKAROUND: cannot control the popup
+    // WORKAROUND: Playwright currently lacks access to controlling the popup. Instead, we open the extension manually in a new tab, provide the current tab index via a URL parameter and switch between different tabs as necessary.
 
     await page.bringToFront()
     const tabId = await this._getCurrentTabId()

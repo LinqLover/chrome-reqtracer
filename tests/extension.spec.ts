@@ -1,12 +1,12 @@
 import { expect } from '@playwright/test'
 import { test } from './fixtures.ts'
-import SimpleDataLoader from './fixtures/resources/SimpleDataLoader.ts'
+import SimpleDataLoader from './fixtures/SimpleDataLoader.ts'
 import ExtensionIcon from './objects/ExtensionIcon.js'
 import { RowSpec } from './objects/ExtensionPopup.ts'
 
 let loader: SimpleDataLoader, icon: ExtensionIcon
 test.beforeEach(async ({ page, extension, resourcesServer }) => {
-  loader = await SimpleDataLoader.open(page, resourcesServer.loaderUrl)
+  loader = await SimpleDataLoader.open(page, resourcesServer.simpleDataLoader.url)
 
   icon = new ExtensionIcon(extension)
   await icon.storeCurrentTabId(page)

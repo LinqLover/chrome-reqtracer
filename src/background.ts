@@ -1,3 +1,7 @@
+/**
+ * Background worker of the extension. Traces web requests, updates the extension badge, and communicates with popups.
+ */
+
 import { BackgroundServices, broadcastMessageToPopups, ClearRequestsMessage, GetRequestsMessage, Request, startMessageServer, TabId } from './support'
 
 class Extension {
@@ -30,8 +34,8 @@ class Extension {
     this.updateBadge().catch(err => console.error(err))
   }
 
-  shouldHideRequest(request: chrome.webRequest.WebRequestDetails) {
-    // Stub for future filtering of requests
+  /** Stub for future filtering of requests. */
+  shouldHideRequest(details: chrome.webRequest.WebRequestDetails) {
     return false
   }
 
@@ -114,6 +118,7 @@ try {
 } catch (error) {
   // debug support: keep the extension alive
   console.error(error)
+  // an empty listener will prevent the extension from being unloaded
   chrome.runtime.onStartup.addListener(() => {
   })
 }

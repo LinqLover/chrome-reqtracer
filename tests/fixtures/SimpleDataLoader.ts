@@ -1,5 +1,6 @@
 import { expect, Page } from '@playwright/test'
 
+/** POM for `simpleDataLoader/index.html`. */
 export default class SimpleDataLoader {
   static async open(page: Page, url: string) {
     const loader = new SimpleDataLoader(page, url)

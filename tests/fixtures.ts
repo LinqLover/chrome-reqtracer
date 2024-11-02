@@ -1,8 +1,24 @@
 import * as httpServer from 'http-server'
 import { test as base, chromium } from '@playwright/test'
+import { Worker } from 'playwright-core'
 import * as path from 'path'
 
-export const test = base.extend({
+export type ExtensionInfo = {
+  extensionId: string
+  backgroundWorker: Worker
+}
+
+export type ResourcesServerInfo = {
+  /** A running HTTP server for a simple HTML/JS page that loads data when pressing a button. */
+  simpleDataLoader: {
+    url: string
+  }
+}
+
+export const test = base.extend<{
+  extension: ExtensionInfo,
+  resourcesServer: ResourcesServerInfo,
+}>({
   context: async ({ }, use) => {
     const pathToExtension = path.join(__dirname, '../dist')
     const context = await chromium.launchPersistentContext('', {
@@ -24,7 +40,7 @@ export const test = base.extend({
     const extensionId = backgroundWorker.url().split('/')[2]
     // give the extension some time to load
     await new Promise((resolve) => setTimeout(resolve, 1000))
-    await use({ extensionId, backgroundWorker })
+    await use(<ExtensionInfo>{ extensionId, backgroundWorker })
   },
 
   resourcesServer: async ({}, use) => {
@@ -35,8 +51,10 @@ export const test = base.extend({
     const port = (server as any).server.address().port
 
     const url = `http://localhost:${port}`
-    await use({
-      loaderUrl: `${url}/simpleDataLoader`,
+    await use(<ResourcesServerInfo>{
+      simpleDataLoader: {
+        url: `${url}/simpleDataLoader`,
+      },
     })
 
     //await new Promise((resolve, reject) => server.close((err) => err ? reject(err) : resolve()))
