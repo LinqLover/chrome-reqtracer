@@ -1,5 +1,5 @@
 declare global {
-  // debug support
+  /** debug support */
   var extension: any
 }
 

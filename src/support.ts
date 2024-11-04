@@ -5,7 +5,7 @@ import { UUID } from 'crypto'
 
 /** A traced web request. */
 export type Request = chrome.webRequest.WebRequestDetails & {
-  /** Note that the regular id of [WebRequestDetailsWebRequestDetails] is not unique if the request was sent multiple times (e.g., for forwarding.) */
+  /** Note that the regular WebRequestDetails.id is not unique if the request was sent multiple times (e.g., for forwarding.) */
   uniqueId: UUID
   /** Time in milliseconds since the creation of the tab. */
   relativeTime: number
@@ -84,7 +84,7 @@ export const startMessageServer = (service: MessageService) => {
         sendResponse(response)
       }
     } else {
-      console.error('Unknown message', message)
+      console.error("Unknown message", message)
     }
   }
   chrome.runtime.onMessage.addListener(listener)

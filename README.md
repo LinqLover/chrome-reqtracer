@@ -27,7 +27,7 @@ You can click on the extension icon to view a list of all sucessful requests.
 
 ## Settings (experimental)
 
-Some settings for the extension can be configured in `src/settings.ts`. Please refer to the comments in the file for more information. In the future, these settings might be exposed to the user through the popup or an options page.
+Some settings for the extension can be configured in [`src/settings.ts`](./src/settings.ts). Please refer to the comments in the file for more information. In the future, these settings might be exposed to the user through the popup or an options page.
 
 ## Development
 

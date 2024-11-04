@@ -30,7 +30,7 @@ export default class SimpleDataLoader {
   }
 
   async loadNextData() {
-    const button = this.page.getByRole("button", {name: "Load Next Data"})
+    const button = this.page.getByRole('button', {name: "Load Next Data"})
     await button.click()
 
     await expect(this.page.locator('//p[last()]')).toHaveText(SimpleDataLoader.DATA[++this.index]!)
@@ -41,7 +41,7 @@ export default class SimpleDataLoader {
   }
 
   async loadUnavailableData() {
-    const button = this.page.getByRole("button", {name: "Load Unavailable Data"})
+    const button = this.page.getByRole('button', {name: "Load Unavailable Data"})
     await button.click()
 
     await expect(this.page.locator('//p[last()]')).toHaveText("Error 0")

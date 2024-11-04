@@ -6,8 +6,11 @@ import { defaultSettings } from './settings'
 import { BackgroundServices, broadcastMessageToPopups, ClearRequestsMessage, GetRequestsMessage, Request, startMessageServer, TabId } from './support'
 
 class Extension {
+  /** Tracked requests per tab. For maximum flexibility, we store the full objects from the API. */
   requests: { [key: TabId]: Request[] } = {}
+  /** Creation times per tab. Used to display readable relative times in the popup. */
   tabCreationTimes: { [key: TabId]: number } = {}
+  /** Times of last navigation per tab. Used for optional resetting requsts after reload (see settings.resetOnReload). */
   navigationStartTimes: { [key: TabId]: number } = {}
   // To be later exposed in the popup or an options page
   settings = {...defaultSettings}
@@ -40,11 +43,12 @@ class Extension {
 
   startListeners() {
     this.startWebRequestsListener()
-    this.startWebNavigationListeners()
     this.startTabListeners()
+    this.startWebNavigationListeners()
     this.startMessageListener()
   }
 
+  /** Tracking network requests. */
   startWebRequestsListener() {
     chrome.webRequest.onCompleted.addListener(
       (details) => {
@@ -62,26 +66,7 @@ class Extension {
     )
   }
 
-  startWebNavigationListeners() {
-    chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-      if (details.frameId === 0) {
-        this.navigationStartTimes[details.tabId] = details.timeStamp
-      }
-    })
-
-    chrome.webNavigation.onCommitted.addListener((details) => {
-      if (!this.settings.resetOnReload) return
-
-      if (details.frameId === 0 && details.transitionType === 'reload') {
-        if (this.requests[details.tabId]) {
-          this.requests[details.tabId] = this.requests[details.tabId].filter((request) =>
-            request.timeStamp > this.navigationStartTimes[details.tabId])
-        }
-        this.requestsChanged(details.tabId)
-      }
-    })
-  }
-
+  /** Tracking of tab switching, creation, and removal to update the badge and tab-related data. */
   startTabListeners() {
     chrome.tabs.onActivated.addListener((activeInfo) => {
       this._currentTabId = activeInfo.tabId
@@ -107,6 +92,28 @@ class Extension {
     })
   }
 
+  /** Tracking navigation operations on tabs (only for optonal resetOnReload). */
+  startWebNavigationListeners() {
+    chrome.webNavigation.onBeforeNavigate.addListener((details) => {
+      if (details.frameId === 0) {
+        this.navigationStartTimes[details.tabId] = details.timeStamp
+      }
+    })
+
+    chrome.webNavigation.onCommitted.addListener((details) => {
+      if (!this.settings.resetOnReload) return
+
+      if (details.frameId === 0 && details.transitionType === 'reload') {
+        if (this.requests[details.tabId]) {
+          this.requests[details.tabId] = this.requests[details.tabId].filter((request) =>
+            request.timeStamp > this.navigationStartTimes[details.tabId])
+        }
+        this.requestsChanged(details.tabId)
+      }
+    })
+  }
+
+  /** Handlings requests by popups to access tracked requests. */
   startMessageListener() {
     startMessageServer(<BackgroundServices>{
       clearRequests: (message: ClearRequestsMessage) => {

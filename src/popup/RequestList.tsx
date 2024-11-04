@@ -2,8 +2,8 @@ import { GetRowIdParams } from 'ag-grid-community'
 import { AgGridReact } from 'ag-grid-react'
 import { FC, useEffect, useState } from 'react'
 import { BroadcastServices, GetRequestsResponse, Request, sendMessageToBackground, startMessageServer, TabId } from '../support.ts'
-import "ag-grid-community/styles/ag-grid.css"
-import "ag-grid-community/styles/ag-theme-quartz.css"
+import 'ag-grid-community/styles/ag-grid.css'
+import 'ag-grid-community/styles/ag-theme-quartz.css'
 
 export type RequestListProps = {
   tabId: TabId | undefined
