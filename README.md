@@ -13,17 +13,17 @@ Uses TypeScript, vite, Chrome Extension API, React, Bootstrap, Font Awesome, AG-
 1. Go to the [releases section](https://github.com/LinqLover/chrome-reqtracer/releases), download `chrome-reqtracer.zip` from the latest release, and extract it in a permanent location.
 2. In Chrome, go to [chrome://extensions/](chrome://extensions/) and ensure <kbd>Developer mode</kbd> in the top right corner is enabled.
 3. Click <kbd>Load unpackaged</kbd> in the top left corner and choose the extracted directory.
-4. Voila, you can now find the **Chrome ReqTracer** in the extensions menu at the top right corner of Chrome! Optionally, you can right-click it to pin it next to the address bar.
+4. Voilà, you can now find the **Chrome ReqTracer** in the extensions menu at the top right corner of Chrome! Optionally, you can right-click it to pin it next to the address bar.
 
 ## Usage
 
 Browse and interact with any website you like and watch how the counter of traced requests increases. Requests are always traced for all tabs and displayed lively for the active tab.
 
-You can click on the extension icon to view a list of all sucessful requests.
+You can click on the extension icon to view a list of all successful requests.
 
 - Use the broom icon (🧹) to clear the list and reset the counter.
 - You click on table headers to change the sorting of requests, resize table columns, or filter the requests through the available options.
-- As the current tab performs further web requests (e.g., when hovering the "I'm feeeling lucky" button of Google at the time of writing), the list will automatically update.
+- As the current tab performs further web requests (e.g., when hovering the "I'm feeling lucky" button of Google at the time of writing), the list will automatically update.
 
 ## Settings (experimental)
 
