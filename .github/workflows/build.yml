@@ -70,3 +70,12 @@ jobs:
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete older prereleases
+        uses: dev-drprasad/delete-older-releases@v0.2.0
+        with:
+          delete_tag_pattern: untagged-
+          keep_latest: 1
+          delete_tags: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
