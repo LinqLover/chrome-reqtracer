@@ -13,7 +13,7 @@ Uses TypeScript, vite, Chrome Extension API, React, Bootstrap, Font Awesome, AG-
 1. Go to the [releases section](https://github.com/LinqLover/chrome-reqtracer/releases), download `chrome-reqtracer.zip` from the latest release, and extract it in a permanent location.
 2. In Chrome, go to [chrome://extensions/](chrome://extensions/) and ensure <kbd>Developer mode</kbd> in the top right corner is enabled.
 3. Click <kbd>Load unpackaged</kbd> in the top left corner and choose the extracted directory.
-4. Voila, you can now find the **Chrome ReqTracer** in the extensions menu at the top right corner of Chrome! Optionally, you can right-click or drag it to pin it next to the address bar.
+4. Voila, you can now find the **Chrome ReqTracer** in the extensions menu at the top right corner of Chrome! Optionally, you can right-click it to pin it next to the address bar.
 
 ## Usage
 
