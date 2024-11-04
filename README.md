@@ -2,7 +2,7 @@
 
 A simple Chrome extension for tracing the requests of tabs. Implementation for an application test task.
 
-Uses TypeScript, vite, Chrome Extension API, React, Bootstrap, Font Awesome, AG-Grid, and Playwright for testing.
+Uses TypeScript, vite, Chrome Extension API, React, Bootstrap, Font Awesome, AG-Grid, Playwright, and GitHub Actions for testing.
 
 *Discover how many places your favorite websites are calling home!* 
 
